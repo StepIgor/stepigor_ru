@@ -1,0 +1,96 @@
+<!--
+  ПИ18-2 Степанов И.
+  Вариант №12
+
+  12. (а) TABLE из одного столбца, содержащих кнопки
+  (б)В элементе SELECT указать число ячеек таблицы.
+  (в)При нажатии на одну кнопку другие становятся недоступными
+  Значения кнопок заданы в массиве
+
+  Ссылки:
+  Мой хостинг:  https://stepigor.ru/university/webdev/t-2.html
+  JSFiddle:
+-->
+
+<html lang="ru" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>t-2</title>
+</head>
+
+<body style="background:lightgrey;color:black;text-align:center;font-size:24px;">
+  <table style="margin:0 auto;border:3px solid blue;">
+    <tr>
+      <td style="text-align:center;font-size:24px;">
+        <b>ПИ18-2 Степанов И.</b><br>
+        Вариант №12 <br><br>
+
+        (а) TABLE из одного столбца, содержащих кнопки<br>
+        (б) В элементе SELECT указать число ячеек таблицы.<br>
+        (в) При нажатии на одну кнопку другие становятся недоступными<br>
+        Значения кнопок заданы в массиве<br><br>
+
+        Ссылки:<br>
+        <a href="https://stepigor.ru/university/webdev/t-2.html" target="_blank">https://stepigor.ru/university/webdev/t-2.html</a><br>
+        <a href="https://stepigor.ru/university/webdev/t-1.html" target="_blank">https://stepigor.ru/university/webdev/t-2.html</a>
+
+      </td>
+    </tr>
+  </table>
+
+  <table style="margin:0 auto;padding:25px;font-size:24px;border:3px solid blue;margin-top:15px;">
+    <tr>
+      <td style="text-align:center;vertical-align:top;padding:25px;">
+        <b>ПЕРВАЯ ФОРМА:</b>
+        <form name="form1">
+          <!-- здесь JS кодом добавим опции из массива -->
+          <select id="select_el" style="font-size:24px;margin-top:15px;">
+
+          </select>
+        </form>
+      </td>
+      <td style="text-align:center;border-left:3px solid blue;vertical-align:top;padding:25px;">
+        <b>ВТОРАЯ ФОРМА:</b>
+          <!-- здесь будет таблица, которая контролируется из первой формы -->
+          <form id="form2">
+
+          </form>
+      </td>
+    </tr>
+  </table>
+
+
+  <script>
+    //добавляем опции в select
+    var options_elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; //кол-во строк в таблице (содержимое select)
+    var button_values = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И']; //значения кнопок
+
+    options_elements.forEach((item, i) => {
+        document.getElementById('select_el').innerHTML += '<option>'+item+'</option>';
+    });
+
+
+    //при выборе кол-во строк генерируем таблицу во второй форме
+    document.getElementById('select_el').addEventListener('change', function(){
+      //очищаем вторую форму
+      document.getElementById('form2').innerHTML = '';
+
+      //добавляем туда таблицу
+      if (this.value != 0) document.getElementById('form2').innerHTML = '<table style="border:3px solid orange;width:100%;" id="put_buttons_here"></table>'
+      for (k=0; k<this.value; k++){
+        document.getElementById('put_buttons_here').innerHTML += '<tr><td style="border:3px solid orange;text-align:center;"><input type="button" style="font-size:24px;width:100%;" onclick="block_other(this.id)" id="but_'+(k+1)+'" value="'+button_values[k]+'"></td></tr>';
+      }
+    });
+
+
+    //сделать неактивными другие кнопки кроме нажатой
+    function block_other(id){
+      for (k=1; k <= document.getElementById('select_el').value; k++){
+        if (id != 'but_' + k) {document.getElementById('but_' + k).setAttribute('disabled', 'disabled');} else {document.getElementById('but_' + k).removeAttribute('disabled');}
+      }
+    }
+  </script>
+
+
+</body>
+</html>
