@@ -1,0 +1,57 @@
+<!--
+  ПИ18-2 Степанов И.
+  Номер по списку: 23
+
+  Разработать примеры использования JQuery, которые включали бы функции из разделов:
+
+  1: hasClass()               -   проверка, принадлежит ли элемент данному классу
+  2: css()                    -   редактирование стилей у элемента
+  3: :password                -   селектор, применяется для выбора полей, использующихся для ввода пароля
+  4: innerHeight()            -   используется для работы с высотой объекта
+  5: wrapInner()              -   "Обертывает изнутри" выбранные элементы заданным wrappingElement, который может быть представлен в виде html, jQuery-объектом или DOM-объектом
+  6: prev()                   -   jQuery метод .prev() позволяет получить каждый сестринский элемент, который находится предыдущим по отношению к текущему элементу в наборе соответствующих элементов.
+  7: off()                    -   удаляет обработчик события, присоединенный методом on()
+  8: toggle()                 -   скрывает или отображает выбранный объект
+  9: focusin()                -   сфокусироваться на выбранном элементе
+  10: slideToggle()           -   позволяет плавно отобразить или скрыть выбранные элементы скользящим движением
+
+  Ссылки:
+  Мой хостинг:  https://stepigor.ru/university/webdev/t-3p2.html
+  JSFiddle:     https://jsfiddle.net/stepigor/mk4hf0qw/
+-->
+
+<!--
+  ПЕРВАЯ ЧАСТЬ РАБОТЫ (ПЕРЕДЕЛАТЬ t-2 С ИСПОЛЬЗОВАНИЕМ JQuery), ФАЙЛ t-3:
+
+  Ссылки:
+  Мой хостинг:  https://stepigor.ru/university/webdev/t-3.html
+  JSFiddle:     https://jsfiddle.net/stepigor/hcbyo9f2/
+
+!-->
+
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>t-3 part 2</title>
+  </head>
+  <body style="background:lightgrey;text-align:center;">
+
+    <h1>Добро пожаловать!</h1>
+    Войдите в систему
+
+    <div style="margin: 0 auto;border:3px solid blue;margin-top:75px;width:50%;text-align:center;background:white;">
+      Введите пароль доступа (верный - <b>12345</b>):<br><br>
+      <input type="password" id="user_password" value="" style="font-size:24px">
+      <br><br>
+      <button type="button" id="send_password" style="font-size:24px;">Войти</button><br><br>
+    </div>
+
+    <script src="https://difres.ru/js/jquery.js">
+    <script type="text/javascript">
+      //сфокусироваться на элементе (п. 9)
+      $('#user_password').focusin();
+    </script>
+
+  </body>
+</html>
