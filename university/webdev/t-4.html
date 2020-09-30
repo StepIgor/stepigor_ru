@@ -4,14 +4,15 @@
     Номер по списку: 23
 
     Реализовать справочник на LocalStorage
-    1) В табличном виде
+    1) В виде списка
     2) Содержать должен пять полей (один из них ключ, остальные придумать)
     3) Добавление производить после ввода # (решетки) в конце поля новых значений (деления между столбцами запятой!)
     4) Удаление реализовать по номеру позиции
     5) Позволить изменять отдельные элементы (придумать самому, как)
 
     Ссылки:
-    
+    Мой хостинг:    https://stepigor.ru/university/webdev/t-4.html
+    JSFiddle:       https://jsfiddle.net/stepigor/419xLcta/
  -->
 
 <!DOCTYPE html>
@@ -20,7 +21,40 @@
     <meta charset="utf-8">
     <title>t-4</title>
   </head>
-  <body>
+  <body style="background:lightgrey;text-align:center;">
+    <table border="3" style="margin:0 auto;" id="task_info">
+      <tr>
+        <td style="text-align:center;">
+          <h2 style="color:darkgreen;">ПИ18-2 - Степанов И.</h2>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align:left;">
+          Реализовать справочник на LocalStorage<br><br>
+          1) В виде списка<br>
+          2) Содержать должен пять полей (один из них ключ, остальные придумать)<br>
+          3) Добавление производить после ввода # (решетки) в конце поля новых значений (деления между столбцами запятой!)<br>
+          4) Удаление реализовать по номеру позиции<br>
+          5) Позволить изменять отдельные элементы (придумать самому, как)<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">
+          Ссылки на работу:<br>
+          <a href="https://stepigor.ru/university/webdev/t-4.html" target="_blank">https://stepigor.ru/university/webdev/t-4.html</a><br>
+          <a href="https://jsfiddle.net/stepigor/419xLcta/" target="_blank">https://jsfiddle.net/stepigor/419xLcta/</a>
+        </td>
+      </tr>
+    </table>
 
+    <span style="color:red;cursor:pointer;font-size:24px;" onclick="$('#task_info').toggle()"><u>Скрыть/отобразить таблицу</u></span>
+
+    <!-- добавить новый элемент -->
+    <div style="margin-top:25px;">
+      
+    </div>
+
+    <!-- JQuery -->
+    <script src="https://difres.ru/js/jquery.js"></script>
   </body>
 </html>
