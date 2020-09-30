@@ -113,29 +113,29 @@
   <div id="login_block" style="margin: 0 auto;border:3px solid blue;margin-top:75px;width:50%;text-align:center;background:white;">
     <br>
     Введите пароль доступа (верный - <b id="valid_password_hint">скрыт</b>):<br><br>
-    <input type="password" id="user_password" value="" style="font-size:24px">
+    <input type="password" id="user_password" value="12345" style="font-size:24px">
     <br><br>
     <button type="button" id="send_password" style="font-size:24px;">Войти</button><br><br>
-	
+
 	<div id="how_to_open_hint_tip" style="padding:15px;">
 		Чтобы подсказка с правильным паролем открылась, сфокусируйтесь на поле ввода пароля.
 	</div>
 	<div id="did_you_know">
-		
+
 	</div>
-	
+
   </div>
-  
+
   <!-- здесь показывается результат попытки входа (успех или провал) -->
   <div id="login_result" style="display:none;margin: 0 auto;border:3px solid blue;margin-top:75px;width:50%;text-align:center;background:white;padding-top:35px;padding-bottom:35px;font-size:36px;">
     ???
   </div>
-  
+
   <!-- блок с пустотой, служит для увеличения высоты документа -->
   <div style="height:250px;">
-	
+
   </div>
-  
+
   <!-- показывает результаты попыток в нижней части экрана -->
   <div style="position:fixed;bottom:5px;width:50%;height:64px;background:white;border:3px solid blue;left:25%;text-align:center;padding:5px;">
 	<b>Количество попыток:</b>
@@ -164,8 +164,8 @@
 	$('#user_password').focusout(function(){
 		$('#valid_password_hint').html('скрыт'); //прячем подсказку при расфокусировке
 	});
-	
-	
+
+
 	//проверка ввода пароля
 	//используется функция slideToggle() под номером 10
 	//используется функция toggle() под номером 8
@@ -177,28 +177,28 @@
 	//используется функция css() под номером 2
 	//используется метод attr() под номером 1
 	var last_attempt = $('#start-point');	//текущий блок попыток, после ввода пароля окрасится в красный или зеленый (располагается в блоке, который находится в нижней части экрана - кол-во попыток)
-	
+
 	$('#send_password').bind('click', function(){	//пользователь "отправил" пароль на проверку (нажал на кнопку)
 		if ($('#user_password').val() == '12345'){	//верный ли пароль?
 			$('#login_result').css({'color':'green'});	//красим текст результата в зеленый (успех же!)
 			$('#login_result').html('Успешный вход!');	//меняем на подходящий текст
-			
+
 			$('#send_password').toggle();	//прячем кнопку отправки пароля
 			$('#send_password').off();	//открепляем текущий обработчик событий (ведь больше спрашивать пароль не нужно!)
-			
+
 			$("input:password").attr({'disabled':'true'});	//отключаем поле ввода пароля
-			
+
 			last_attempt.css({'background':'green'});	//красим текущий блок в истории попыток в зеленый (находится в нижней части экрана)
 			last_attempt = last_attempt.prev();	//переходим к следующему блоку попытки
-			
+
 			$('#how_to_open_hint_tip').wrapInner('<strike></strike>');	//перечеркиваем текст с подсказкой, как узнать правильный пароль
-			
+
 			//показываем интересный факт, высоту документа
 			$('#did_you_know').html('<span style="color:blue;font-weight:bold;">А вы знали?</span> Высота этой веб-страницы составляет <b>' + $(document).innerHeight() + '</b> пикселей!');
 		} else {	//если пароль не угадали
 			$('#login_result').css({'color':'red'});	//красим текст результата попытки в красный
 			$('#login_result').html('Провал. Неверный пароль!');	//ставим нужный текст
-			
+
 			last_attempt.css({'background':'red'});	//красим текущий блок истории попыток в красный (располагается в нижней части экрана)
 			last_attempt = last_attempt.prev();	//переходим к след. блоку
 		}
