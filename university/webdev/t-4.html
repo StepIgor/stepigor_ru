@@ -6,13 +6,20 @@
     Реализовать справочник на LocalStorage
     1) В виде списка
     2) Содержать должен пять полей (один из них ключ, остальные придумать)
-    3) Добавление производить после ввода # (решетки) в конце поля новых значений (деления между столбцами запятой!)
+    3) Добавление производить после ввода # (решетки) в конце поля новых значений
     4) Удаление реализовать по номеру позиции
     5) Позволить изменять отдельные элементы (придумать самому, как)
 
     Ссылки:
     Мой хостинг:    https://stepigor.ru/university/webdev/t-4.html
     JSFiddle:       https://jsfiddle.net/stepigor/419xLcta/
+	
+	Общий вид структуры справочника:
+	1)номер строки (это порядковый номер массива в общем массиве)
+	2)номер телефона
+	3)Фамилия, имя
+	4)Дата рождения
+	5)адрес проживания
  -->
 
 <!DOCTYPE html>
@@ -33,7 +40,7 @@
           Реализовать справочник на LocalStorage<br><br>
           1) В виде списка<br>
           2) Содержать должен пять полей (один из них ключ, остальные придумать)<br>
-          3) Добавление производить после ввода # (решетки) в конце поля новых значений (деления между столбцами запятой!)<br>
+          3) Добавление производить после ввода # (решетки) в конце поля новых значений<br>
           4) Удаление реализовать по номеру позиции<br>
           5) Позволить изменять отдельные элементы (придумать самому, как)<br>
         </td>
@@ -49,12 +56,138 @@
 
     <span style="color:red;cursor:pointer;font-size:24px;" onclick="$('#task_info').toggle()"><u>Скрыть/отобразить таблицу</u></span>
 
-    <!-- добавить новый элемент -->
     <div style="margin-top:25px;">
-      
+      <h2 style="color:darkgreen;">Справочник клиентов компании</h2>
     </div>
+	
+	<!-- список действий -->
+	<div style="text-align:center;font-size:20px;color:blue;margin-bottom:15px;">
+		<u style="cursor:pointer;"><span onclick="$('#new_client').slideToggle();">Добавить клиента</span>
+		<span style="margin-left:20px" onclick="$('#change_client').slideToggle();">Изменить клиента</span>
+		<span style="margin-left:20px" onclick="$('#del_client').slideToggle();">Удалить клиента</span>
+		</u>
+	</div>
+	
+	<!-- поля добавления клиента -->
+	<div id="new_client" style="display:none;margin-bottom:15px;text-align:center;">
+		<b>Новый клиент:</b><br>
+		<input type="text" id="new_phonenum" maxlength="15" value="9-999-999-99-99" placeholder="Телефон">
+		<input type="text" id="new_name" maxlength="24" value="Сидоров Иван" placeholder="Фамилия, имя">
+		<input type="date" id="new_date" value="2020-01-01" placeholder="Дата рождения">
+		<input type="text" id="new_addr" maxlength="30" value="ул. Щербаковская, д. 38" placeholder="Адрес проживания"><br>
+		<span style="color:red;">Для подтверждения ввода поставьте символ # (решетки) В КОНЦЕ поля с адресом проживания!!!</span>
+	</div>
+	
+	<!-- поля удаления клиента -->
+	<div id="del_client" style="display:none;margin-bottom:15px;text-align:center;">
+		<b>Введите номер клиента для удаления:</b><br>
+		<input type="number" id="del_number" value="2"> <button onclick="remove_now($('#del_number').val())">Удалить!</button>
+	</div>
+	
+	<!-- сам справочник -->
+	<div style="font-family:courier new;font-size:12px;text-align:center;margin:0 auto;width:95%;" id="guidebook">
+		
+	</div>
 
     <!-- JQuery -->
     <script src="https://difres.ru/js/jquery.js"></script>
+	
+	<!-- Механизм работы -->
+	<script>
+		//своя функция подгонки размера строкового поля
+		function str_resize(str, sz){ //сама строка + требуемый размер в символах (вставка пробелов)
+			if (str.length == sz) return str;
+			str_new = str;
+			str_len = str_new.length;
+			while (str_len != sz){
+				str_new += '\u00A0';
+				str_len++;
+				if (str_len > 30){		//защита от своей невнимательности
+					return str_new;
+				}
+			}
+			return str_new;
+		}
+		
+		//проверяем, впервые ли производится открытие страницы
+		if (localStorage.getItem('stepigor-dict') == null){
+			var new_dict = [['8-800-555-35-35','Степанов Игорь', '07.10.2000', 'ул. Кораблестроителей, д. 8'],
+							['8-933-345-35-22','Лисейчева Мария', '03.12.2001', 'ул. Пешеходов, д. 12'],
+							['8-917-742-12-11','Иванова Диана', '11.05.2000', 'ул. Советская, д. 5'],]; 				//начальный справочник
+							
+			//запишем в память
+			localStorage.setItem('stepigor-dict', JSON.stringify(new_dict));
+		}
+		
+		//рисуем шапку
+		$('#guidebook').html('<b>'+str_resize('№ п/п', 10)+str_resize('Номер телефона', 18)+str_resize('Фамилия, имя', 25)+str_resize('Дата рождения', 20)+str_resize('Адрес проживания', 30)+'</b><hr><div id="put_here"></div>');
+		
+		//функция обновления содержимого
+		
+		function refresh_dict(){
+			$('#put_here').html('');
+			act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+			var total_count = 0;
+			for (ind in act_dict){
+				$('#put_here').append(str_resize(String(total_count), 10)+str_resize(act_dict[ind][0], 18)+str_resize(act_dict[ind][1], 25)+str_resize(act_dict[ind][2], 20)+str_resize(act_dict[ind][3], 30)+'<br>');
+				total_count++;
+			}
+		}
+		
+		//процедура ввода нового клиента
+		$('#new_addr').bind('keyup', function(e){
+			if ($('#new_addr').val()[$('#new_addr').val().length - 1] == '#'){		//если ввели в конце #, то пытаемся добавить запись в справочник
+				var phone_test = /^[0-9]{1}[-]{1}[0-9]{3}[-]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}$/.test($('#new_phonenum').val());	//правильно ли ввели номер телефона
+				var name_test = $('#new_name').val().split(' ').length == 2;
+				if (phone_test == true){
+					if (name_test != true){
+						alert('Фамилия и имя - это 2 слова.');
+						return;
+					}
+					new_client = [];
+					new_client.push($('#new_phonenum').val());
+					new_client.push($('#new_name').val());
+					
+					
+					//блок переработки формата даты на привычный нам (с тире на точки!)
+					var new_date = new Date($('#new_date').val());
+					var nd_day = new_date.getDate() >= 10 ? new_date.getDate() : ("0" + new_date.getDate());
+					var nd_month = new_date.getMonth() < 9 ? ("0" + (new_date.getMonth() + 1)) : new_date.getMonth() + 1;
+					var nd_year = new_date.getFullYear();
+					new_client.push(nd_day + '.' + nd_month + '.' + nd_year);					
+					
+					new_client.push($('#new_addr').val().slice(0, $('#new_addr').val().length - 1));
+					
+					act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+					act_dict.push(new_client);
+					localStorage.setItem('stepigor-dict', JSON.stringify(act_dict));
+					
+					alert('Успешно добавлено!');
+					
+					$('#new_client').slideToggle();
+					refresh_dict();
+					$('#new_addr').val($('#new_addr').val().slice(0, $('#new_addr').val().length - 1));
+				} else {
+					alert('Неправильно введен номер телефона. Отмена операции.');
+				}
+			}
+		});
+		
+		
+		//процедура удаления клиента
+		function remove_now(cli_id){
+			act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+			if (cli_id >= 0 && cli_id < act_dict.length){
+				act_dict.splice(cli_id, 1);
+				localStorage.setItem('stepigor-dict', JSON.stringify(act_dict));
+				alert('Удаление выполнено!');
+				refresh_dict();
+			} else {
+				alert('Клиента с таким id нет, увы!');
+			}
+		}
+		
+		refresh_dict();
+	</script>
   </body>
 </html>
