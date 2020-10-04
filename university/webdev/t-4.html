@@ -29,6 +29,8 @@
     <title>t-4</title>
   </head>
   <body style="background:lightgrey;text-align:center;">
+  
+	<!-- подпись и описание задания -->
     <table border="3" style="margin:0 auto;" id="task_info">
       <tr>
         <td style="text-align:center;">
@@ -54,8 +56,10 @@
       </tr>
     </table>
 
+	<!-- триггер на скрытие или закрытие таблицы выше -->
     <span style="color:red;cursor:pointer;font-size:24px;" onclick="$('#task_info').toggle()"><u>Скрыть/отобразить таблицу</u></span>
 
+	<!-- заголовок -->
     <div style="margin-top:25px;">
       <h2 style="color:darkgreen;">Справочник клиентов компании</h2>
     </div>
@@ -84,9 +88,35 @@
 		<input type="number" id="del_number" value="2"> <button onclick="remove_now($('#del_number').val())">Удалить!</button>
 	</div>
 	
+	<!-- поле изменения клиента	-->
+	<div id="change_client" style="display:none;margin-bottom:15px;text-align:center;">
+		<b>Введите номер клиента для изменения:</b><br>
+		<input type="number" id="chg_number" value="2"> <button id="call_change_subblock_but" onclick="trytochange_now($('#chg_number').val())">Изменить!</button>
+		<div id="update_subblock" style="display:none">
+			<input type="text" id="edit_phonenum" maxlength="15" value="" placeholder="Телефон">
+			<input type="text" id="edit_name" maxlength="24" value="" placeholder="Фамилия, имя">
+			<input type="date" id="edit_date" value="" placeholder="Дата рождения">
+			<input type="text" id="edit_addr" maxlength="30" value="" placeholder="Адрес проживания">
+			<button onclick="save_updated_data()">Сохранить изменения!</button>
+		</div>
+	</div>
+	
 	<!-- сам справочник -->
 	<div style="font-family:courier new;font-size:12px;text-align:center;margin:0 auto;width:95%;" id="guidebook">
 		
+	</div>
+
+	<!-- небольшая самореклама -->
+	<div id="notice" style="position:fixed;left:5px;bottom:5px;background:rgba(255,255,255,0.75);border-radius:5px;padding:15px;text-align:left;max-width:25%;">
+		<img src="https://diary.difres.ru/favicon.png" style="width:32px;height:32px;vertical-align:middle;"> <a href="https://diary.difres.ru" target="_blank" style="font-family:calibri;color:darkblue;font-size:24px;vertical-align:middle;text-decoration:none;">Дневник | difres.ru</a>
+		<br>
+		<div style="font-size:16px;margin-top:15px;">
+			Давно написанное мною приложение на JS, дающее возможность вести свой дневник. Активно используется LocalStorage.
+			<br><br>
+			<b>Страница в JS Store:</b> <a href="https://jsstore.difres.ru/product.html?id=1" target="_blank">перейти</a>
+		</div>
+		<br>
+		<span onclick="$('#notice').toggle()" style="color:red;cursor:pointer;">Закрыть</span>
 	</div>
 
     <!-- JQuery -->
@@ -97,8 +127,8 @@
 		//своя функция подгонки размера строкового поля
 		function str_resize(str, sz){ //сама строка + требуемый размер в символах (вставка пробелов)
 			if (str.length == sz) return str;
-			str_new = str;
-			str_len = str_new.length;
+			var str_new = str;
+			var str_len = str_new.length;
 			while (str_len != sz){
 				str_new += '\u00A0';
 				str_len++;
@@ -122,11 +152,11 @@
 		//рисуем шапку
 		$('#guidebook').html('<b>'+str_resize('№ п/п', 10)+str_resize('Номер телефона', 18)+str_resize('Фамилия, имя', 25)+str_resize('Дата рождения', 20)+str_resize('Адрес проживания', 30)+'</b><hr><div id="put_here"></div>');
 		
-		//функция обновления содержимого
+		//функция обновления содержимого (отображение пользователю)
 		
 		function refresh_dict(){
 			$('#put_here').html('');
-			act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+			var act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
 			var total_count = 0;
 			for (ind in act_dict){
 				$('#put_here').append(str_resize(String(total_count), 10)+str_resize(act_dict[ind][0], 18)+str_resize(act_dict[ind][1], 25)+str_resize(act_dict[ind][2], 20)+str_resize(act_dict[ind][3], 30)+'<br>');
@@ -138,14 +168,24 @@
 		$('#new_addr').bind('keyup', function(e){
 			if ($('#new_addr').val()[$('#new_addr').val().length - 1] == '#'){		//если ввели в конце #, то пытаемся добавить запись в справочник
 				var phone_test = /^[0-9]{1}[-]{1}[0-9]{3}[-]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}$/.test($('#new_phonenum').val());	//правильно ли ввели номер телефона
-				var name_test = $('#new_name').val().split(' ').length == 2;
+				var name_test = $('#new_name').val().split(' ').length == 2;	//не пусто ли поле имени
+				var addr_test = $('#new_addr').val().length < 2;	//не пусто ли поле адреса
+				var date_test = $('#new_date').val() == '';		//не пусто ли поле даты
 				if (phone_test == true){
-					if (name_test != true){
+					if (name_test != true || $('#new_name').val().length < 3){
 						alert('Фамилия и имя - это 2 слова.');
 						return;
 					}
-					new_client = [];
-					new_client.push($('#new_phonenum').val());
+					if (addr_test == true){
+						alert('Адрес не может быть пустым, ведь живет же человек где-то?!');
+						return;
+					}
+					if (date_test == true){
+						alert('Дата не может быть пустой!');
+						return;
+					}
+					var new_client = [];		//массив будет включен в общий
+					new_client.push($('#new_phonenum').val());	//добавляем по очереди поля
 					new_client.push($('#new_name').val());
 					
 					
@@ -158,15 +198,15 @@
 					
 					new_client.push($('#new_addr').val().slice(0, $('#new_addr').val().length - 1));
 					
-					act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+					var act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));	//читаем из хранилища актуальный словарь
 					act_dict.push(new_client);
-					localStorage.setItem('stepigor-dict', JSON.stringify(act_dict));
+					localStorage.setItem('stepigor-dict', JSON.stringify(act_dict));	//записываем изменения в хранилище
 					
 					alert('Успешно добавлено!');
 					
-					$('#new_client').slideToggle();
+					$('#new_client').slideToggle();		//прячем форму ввода
 					refresh_dict();
-					$('#new_addr').val($('#new_addr').val().slice(0, $('#new_addr').val().length - 1));
+					$('#new_addr').val($('#new_addr').val().slice(0, $('#new_addr').val().length - 1));		//удаляем решетку в конце поля
 				} else {
 					alert('Неправильно введен номер телефона. Отмена операции.');
 				}
@@ -176,7 +216,7 @@
 		
 		//процедура удаления клиента
 		function remove_now(cli_id){
-			act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+			var act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
 			if (cli_id >= 0 && cli_id < act_dict.length){
 				act_dict.splice(cli_id, 1);
 				localStorage.setItem('stepigor-dict', JSON.stringify(act_dict));
@@ -187,7 +227,78 @@
 			}
 		}
 		
-		refresh_dict();
+		var cli_id_to_update = null;	//номер клиента для изменения
+		
+		//попытка найти клиента для изменения
+		function trytochange_now(cli_id){
+			var act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+			
+			if (cli_id >=0 && cli_id < act_dict.length){
+				cli_id_to_update = cli_id;
+				$('#update_subblock').slideToggle();
+				
+				//предзаполнение полей
+				$('#edit_phonenum').val(act_dict[cli_id][0]);
+				$('#edit_name').val(act_dict[cli_id][1]);
+				$('#edit_date').val(act_dict[cli_id][2].split('.')[2]+'-'+act_dict[cli_id][2].split('.')[1]+'-'+act_dict[cli_id][2].split('.')[0]);
+				$('#edit_addr').val(act_dict[cli_id][3]);
+			} else {
+				alert('Клиента с таким id нет, увы!');
+				if ($('#update_subblock').css('display') == 'block'){	//прячем форму ввода
+					$('#update_subblock').slideToggle();
+				}
+			}
+		}
+		
+		function save_updated_data(){	//сохранение измененных данных
+			var act_dict = JSON.parse(localStorage.getItem('stepigor-dict'));
+			
+			if (!(cli_id_to_update >=0 && cli_id_to_update < act_dict.length)){	//защита от махинаций формами со стороны пользователя
+				alert('Клиент уже не существует под данным id');
+				return;
+			}
+		
+			var phone_test = /^[0-9]{1}[-]{1}[0-9]{3}[-]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}$/.test($('#edit_phonenum').val());	//правильно ли ввели номер телефона
+				var name_test = $('#edit_name').val().split(' ').length == 2;	//проверка, аналогична в функции ввода нового клиента
+				var addr_test = $('#edit_addr').val().length < 2;
+				var date_test = $('#edit_date').val() == '';
+				if (phone_test == true){
+					if (name_test != true || $('#edit_name').val().length < 3){
+						alert('Фамилия и имя - это 2 слова.');
+						return;
+					}
+					if (addr_test == true){
+						alert('Адрес не может быть пустым, ведь живет же человек где-то?!');
+						return;
+					}
+					if (date_test == true){
+						alert('Дата не может быть пустой!');
+						return;
+					}
+					var new_client = [];	//данный массив будет вставлен по индексу в общий
+					new_client.push($('#edit_phonenum').val());
+					new_client.push($('#edit_name').val());
+					//блок переработки формата даты на привычный нам (с тире на точки!)
+					var new_date = new Date($('#edit_date').val());
+					var nd_day = new_date.getDate() >= 10 ? new_date.getDate() : ("0" + new_date.getDate());
+					var nd_month = new_date.getMonth() < 9 ? ("0" + (new_date.getMonth() + 1)) : new_date.getMonth() + 1;
+					var nd_year = new_date.getFullYear();
+					new_client.push(nd_day + '.' + nd_month + '.' + nd_year);					
+					new_client.push($('#edit_addr').val());
+
+					act_dict[cli_id_to_update] = new_client;
+
+					localStorage.setItem('stepigor-dict', JSON.stringify(act_dict));
+					alert('Успешно обновлено!');
+					if ($('#update_subblock').css('display') == 'block') $('#update_subblock').slideToggle();	//прячем форму ввода
+					$('#change_client').slideToggle();
+					refresh_dict();
+				} else {
+					alert('Неправильно введен номер телефона. Отмена операции.');
+				}
+		}
+		
+		refresh_dict(); //первое отображение справочника
 	</script>
   </body>
 </html>
